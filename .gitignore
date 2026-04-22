@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Golem build artifacts
+golem-temp/
+.claude/
+
+# CLI build output
+cli/dist/
+
+# Golem Claude session files
+.claude/
+
+# Nix
+result
+result-*
+
+# OS
+.DS_Store

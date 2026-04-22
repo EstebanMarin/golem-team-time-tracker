@@ -1,0 +1,25 @@
+{
+  "name": "@golem-team/time-tracker-cli",
+  "version": "0.1.0",
+  "description": "Golem team time tracker CLI",
+  "type": "module",
+  "bin": {
+    "tt": "./dist/main.js"
+  },
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "@effect/cli": "^0",
+    "@effect/platform": "^0",
+    "@effect/platform-node": "^0",
+    "effect": "^3"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "tsx": "^4",
+    "typescript": "^5"
+  }
+}
