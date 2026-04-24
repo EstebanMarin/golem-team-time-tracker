@@ -48,9 +48,15 @@ export const loadConfig: Effect.Effect<AppConfig, ConfigError> = Effect.gen(
   },
 );
 
-export const TtConfigLive: Layer.Layer<TtConfig, ConfigError> = Layer.effect(
+// Never fails — returns a sentinel config if file is missing.
+// API calls will surface a clear "run tt init" error when serverUrl is empty.
+export const TtConfigLive: Layer.Layer<TtConfig> = Layer.effect(
   TtConfig,
-  loadConfig,
+  loadConfig.pipe(
+    Effect.orElse(() =>
+      Effect.succeed<AppConfig>({ memberId: '', memberName: '', serverUrl: '' }),
+    ),
+  ),
 );
 
 export const saveConfig = (config: AppConfig): Effect.Effect<void, ConfigError> =>

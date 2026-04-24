@@ -113,6 +113,20 @@ export const TtApiLive: Layer.Layer<TtApi, never, TtConfig | HttpClient.HttpClie
       const memberBase = `${config.serverUrl}/members/${config.memberId}`;
       const teamBase = `${config.serverUrl}/team`;
 
+      if (!config.serverUrl) {
+        return {
+          startTimer: () => Effect.fail(new ApiError({ status: 0, message: 'Not configured. Run: tt init' })),
+          stopTimer: () => Effect.fail(new ApiError({ status: 0, message: 'Not configured. Run: tt init' })),
+          logTime: () => Effect.fail(new ApiError({ status: 0, message: 'Not configured. Run: tt init' })),
+          getStatus: () => Effect.fail(new ApiError({ status: 0, message: 'Not configured. Run: tt init' })),
+          getEntries: () => Effect.fail(new ApiError({ status: 0, message: 'Not configured. Run: tt init' })),
+          deleteEntry: () => Effect.fail(new ApiError({ status: 0, message: 'Not configured. Run: tt init' })),
+          registerMember: () => Effect.fail(new ApiError({ status: 0, message: 'Not configured. Run: tt init' })),
+          getMembers: () => Effect.fail(new ApiError({ status: 0, message: 'Not configured. Run: tt init' })),
+          getTeamSummary: () => Effect.fail(new ApiError({ status: 0, message: 'Not configured. Run: tt init' })),
+        } satisfies TtApiShape;
+      }
+
       const mapReqErr = Effect.mapError((e: unknown) =>
         new ApiError({ status: 0, message: String(e) }),
       );
