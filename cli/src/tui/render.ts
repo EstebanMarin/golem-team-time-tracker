@@ -97,6 +97,69 @@ export const weekRange = (offsetWeeks = 0): { from: string; to: string; dates: s
   return { from: dates[0]!, to: dates[6]!, dates };
 };
 
+// ── Calendar grid renderer ────────────────────────────────────────────────────
+
+export const buildCalLines = (
+  year: number,
+  month: number,
+  minutesByDate: Map<string, number>,
+  today: string,
+): string[] => {
+  const { daysInMonth, firstDow } = monthRange(year, month);
+  const totalMins = [...minutesByDate.values()].reduce((a, b) => a + b, 0);
+  const trackedDays = minutesByDate.size;
+
+  const title = `${MONTH_NAMES[month - 1]} ${year}`;
+  const CELL = 6;
+  const gridWidth = CELL * 7;
+  const pad = Math.max(0, Math.floor((gridWidth - title.length) / 2));
+
+  const lines: string[] = [];
+  lines.push('');
+  lines.push(' '.repeat(pad) + bold(cyan(title)));
+  lines.push('');
+  lines.push(DAY_NAMES_SHORT.map(d => dim(d.padEnd(CELL))).join(''));
+
+  const cells: Array<{ date: string; day: number; mins: number } | null> = [];
+  for (let i = 0; i < firstDow; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    cells.push({ date, day: d, mins: minutesByDate.get(date) ?? 0 });
+  }
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  for (let row = 0; row < cells.length / 7; row++) {
+    const slice = cells.slice(row * 7, row * 7 + 7);
+
+    lines.push(slice.map((cell, col) => {
+      if (!cell) return ' '.repeat(CELL);
+      const dayStr = String(cell.day).padStart(2);
+      const isToday   = cell.date === today;
+      const isWeekend = col >= 5;
+      const hasMins   = cell.mins > 0;
+      const isFuture  = cell.date > today;
+      if (isToday)   return bold(yellow(dayStr.padEnd(CELL)));
+      if (hasMins)   return green(dayStr.padEnd(CELL));
+      if (isFuture)  return dim(dayStr.padEnd(CELL));
+      if (isWeekend) return gray(dayStr.padEnd(CELL));
+      return dayStr.padEnd(CELL);
+    }).join(''));
+
+    lines.push(slice.map(cell => {
+      if (!cell || cell.mins === 0) return ' '.repeat(CELL);
+      return green(formatCell(cell.mins).padEnd(CELL));
+    }).join(''));
+  }
+
+  lines.push(dim('─'.repeat(gridWidth)));
+  lines.push(
+    `${bold('Total:')} ${green(formatDuration(totalMins))}` +
+    dim(` · ${trackedDays} day${trackedDays !== 1 ? 's' : ''} tracked`),
+  );
+  lines.push('');
+  return lines;
+};
+
 export const MONTH_NAMES = [
   'January','February','March','April','May','June',
   'July','August','September','October','November','December',

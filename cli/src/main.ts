@@ -6,9 +6,12 @@ import { TtApiLive } from './api/client.js';
 import { TtConfigLive } from './config.js';
 import { calCommand } from './commands/cal.js';
 import { deleteCommand } from './commands/delete.js';
+import { fillCommand } from './commands/fill.js';
 import { initCommand } from './commands/init.js';
 import { listCommand } from './commands/list.js';
 import { logCommand } from './commands/log.js';
+import { projectCommand } from './commands/project.js';
+import { registerCommand } from './commands/register.js';
 import { startCommand } from './commands/start.js';
 import { statusCommand } from './commands/status.js';
 import { stopCommand } from './commands/stop.js';
@@ -19,6 +22,9 @@ import { weekCommand } from './commands/week.js';
 
 const tt = Command.make('tt', {}).pipe(
   Command.withSubcommands([
+    registerCommand,
+    projectCommand,
+    fillCommand,
     initCommand,
     startCommand,
     stopCommand,

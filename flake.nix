@@ -79,6 +79,10 @@
         golem-full = mkGolemBin "golem" bins.golem;
         golem-cli = mkGolemBin "golem-cli" bins.golem-cli;
 
+        tt-cli = pkgs.writeShellScriptBin "tt" ''
+          exec node "$PWD/cli/node_modules/.bin/tsx" "$PWD/cli/src/main.ts" "$@"
+        '';
+
       in {
         packages = {
           inherit golem-full golem-cli;
@@ -100,13 +104,33 @@
             # Build tools
             pkgs.curl
             pkgs.jq
+
+            # tt CLI wrapper
+            tt-cli
           ];
 
           shellHook = ''
-            echo "Golem Team Time Tracker dev environment"
-            echo "  golem     $(golem --version 2>/dev/null || echo 'not available')"
-            echo "  node      $(node --version)"
-            echo "  npm       $(npm --version)"
+            # Install CLI dependencies silently on first enter
+            if [ ! -d "$PWD/cli/node_modules" ]; then
+              npm install --prefix "$PWD/cli" --silent 2>/dev/null
+            fi
+
+            echo "Golem Team Time Tracker"
+            echo ""
+            echo "Backend:"
+            echo "  golem server run                                    start local server"
+            echo "  golem build && golem deploy                         build + deploy agents"
+            echo "  golem build && golem deploy --reset                 build + deploy (wipe state)"
+            echo ""
+            echo "CLI:"
+            echo "  tt register --id <id> --name <name>                register as team member"
+            echo "  tt project add <name>  /  tt project list          manage projects"
+            echo "  tt fill --month YYYY-MM --project <p> --hours 8    log a full month"
+            echo "  tt fill --week --project <p> --hours 8             log current week"
+            echo "  tt list  /  tt list --monthly  /  tt list --daily  view entries"
+            echo "  tt status / start / stop / log / delete            live tracking"
+            echo "  tt team members / summary                          team overview"
+            echo ""
           '';
         };
       }

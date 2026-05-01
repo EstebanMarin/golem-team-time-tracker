@@ -18,7 +18,7 @@ export const initCommand = Command.make(
   },
   ({ memberId, memberName, serverUrl }) =>
     Effect.gen(function* () {
-      yield* saveConfig({ memberId, memberName, serverUrl });
+      yield* saveConfig({ memberId, memberName, serverUrl, projects: [] });
       yield* Console.log(`Config saved to ${configPath}`);
       yield* Console.log(`  member-id:   ${memberId}`);
       yield* Console.log(`  member-name: ${memberName}`);

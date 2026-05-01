@@ -9,6 +9,7 @@ const AppConfigSchema = Schema.Struct({
   memberId: Schema.String,
   memberName: Schema.String,
   serverUrl: Schema.String,
+  projects: Schema.optionalWith(Schema.Array(Schema.String), { default: () => [] }),
 });
 
 export type AppConfig = Schema.Schema.Type<typeof AppConfigSchema>;
@@ -54,7 +55,7 @@ export const TtConfigLive: Layer.Layer<TtConfig> = Layer.effect(
   TtConfig,
   loadConfig.pipe(
     Effect.orElse(() =>
-      Effect.succeed<AppConfig>({ memberId: '', memberName: '', serverUrl: '' }),
+      Effect.succeed<AppConfig>({ memberId: '', memberName: '', serverUrl: '', projects: [] }),
     ),
   ),
 );
