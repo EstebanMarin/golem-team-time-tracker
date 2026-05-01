@@ -1,9 +1,10 @@
 import { Command } from '@effect/cli';
 import { FetchHttpClient } from '@effect/platform';
 import { NodeContext, NodeRuntime } from '@effect/platform-node';
-import { Effect, Layer } from 'effect';
-import { TtApiLive } from './api/client.js';
-import { TtConfigLive } from './config.js';
+import { Console, Effect, Layer } from 'effect';
+import { ApiError, TtApiLive } from './api/client.js';
+import { ConfigError, TtConfigLive } from './config.js';
+import { ansi } from './tui/render.js';
 import { calCommand } from './commands/cal.js';
 import { deleteCommand } from './commands/delete.js';
 import { fillCommand } from './commands/fill.js';
@@ -52,9 +53,29 @@ const ApiLayer = TtApiLive.pipe(
 
 const cli = Command.run(tt, { name: 'tt', version: '0.1.0' });
 
+const prettyError = (lines: string[]): Effect.Effect<void> =>
+  Console.error(
+    `\n${ansi.red}${ansi.bold}✗${ansi.reset} ${lines[0]}\n` +
+    lines.slice(1).map(l => `  ${ansi.dim}${l}${ansi.reset}`).join('\n') +
+    '\n',
+  );
+
 NodeRuntime.runMain(
   Effect.suspend(() => cli(process.argv)).pipe(
     Effect.provide(ApiLayer),
     Effect.provide(NodeContext.layer),
+    Effect.catchTag('ApiError', (e: ApiError) => {
+      if (e.status === 0) {
+        return prettyError([
+          'Cannot reach the Golem server',
+          e.message.replace(/^RequestError:\s*/, ''),
+          'Is "golem server run" running?',
+        ]);
+      }
+      return prettyError([`Server error (${e.status})`, e.message]);
+    }),
+    Effect.catchTag('ConfigError', (e: ConfigError) =>
+      prettyError([e.message]),
+    ),
   ),
 );
