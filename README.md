@@ -18,6 +18,8 @@ The backend runs on [Golem](https://golem.cloud) — a durable execution runtime
 The CLI is built with [Effect](https://effect.website) — typed errors, composable layers, no runtime surprises.
 
 The deeper point this project makes: a business process that most teams outsource to a SaaS product can run on a **Raspberry Pi Zero 2W** sitting on a desk. Golem's durable execution model makes that viable. Power it off, power it back on, run `golem server run` — everything is there. The operational profile of a Pi running Golem is closer to a router than a server.
+<img width="465" height="349" alt="image" src="https://github.com/user-attachments/assets/8046760d-bdb6-466a-b7cf-0d21c65fca90" />
+
 
 ## Getting started
 
