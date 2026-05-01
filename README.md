@@ -12,6 +12,9 @@ The backend runs on [Golem](https://golem.cloud) — a durable execution runtime
 - No data loss on crash or power cut. The server replays on restart.
 - No deployment complexity. One process, one directory.
 
+- <img width="854" height="664" alt="image" src="https://github.com/user-attachments/assets/897de3f5-ee48-4a85-9016-215a1426316b" />
+
+
 The CLI is built with [Effect](https://effect.website) — typed errors, composable layers, no runtime surprises.
 
 The deeper point this project makes: a business process that most teams outsource to a SaaS product can run on a **Raspberry Pi Zero 2W** sitting on a desk. Golem's durable execution model makes that viable. Power it off, power it back on, run `golem server run` — everything is there. The operational profile of a Pi running Golem is closer to a router than a server.
